@@ -33,7 +33,7 @@
 
 ---
 
-## 执行指令
+## 运行指令
 
 nohup python preprocess_multistep_retro.py \
   --input_dir ../dataset \
