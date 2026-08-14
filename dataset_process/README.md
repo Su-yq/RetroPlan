@@ -35,21 +35,30 @@
 
 ## 运行指令
 
+raw数据处理为逐步多步逆合成
+```bash
 nohup python preprocess_multistep_retro.py \
   --input_dir ../dataset \
   --output_dir ../dataset \
   --inner_path_as_route \
   --save_flat_route_level > preprocess.log 2>&1 &
+```
 
+构建单步数据集
+```bash
 nohup python build_single_step_dataset.py \
   --input_dir ../dataset \
   --output_dir ../dataset/single_step \
   --dedup_mode reaction > preprocess.log 2>&1 &
+```
 
+数据集去重
+```bash
 nohup python filter_single_step_overlaps.py \
   --data_dir ../dataset/single_step \
   --output_dir ../dataset/single_step_no_overlap \
   --key_type reaction > tmp.log 2>&1 &
+```
 
 ## 依赖库
 
