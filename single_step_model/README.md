@@ -58,7 +58,7 @@ Please predict the reactant of the product:\n{product_SMILES}
 训练新prompt（route context）
 nohup python train_molt5_route_context_sft.py \
   --data_dir ../dataset/single_step_no_overlap \
-  --model_dir ../molt5 \
+  --model_dir ../MolT5 \
   --output_dir ../molt5_route_context_sft \
   --train_file train_single_step_dedup.json \
   --valid_file valid_single_step_no_train_overlap.json \
