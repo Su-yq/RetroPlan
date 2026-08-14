@@ -94,8 +94,7 @@ nohup python build_dpo_pairs_with_u.py \
   --forward_topk 5 \
   --forward_num_beams 5 \
   --forward_batch_size 16 \
-  --forward_fp16 \
-  > build_dpo_pairs_u.log 2>&1 &
+  --forward_fp16 > build_dpo_pairs_u.log 2>&1 &
 
 筛选构建u-positive:
 python build_u_positive_sft_data.py \
@@ -129,8 +128,7 @@ nohup env CUDA_VISIBLE_DEVICES=3 python train_molt5_route_context_positive_sft.p
   --max_depth 14 \
   --max_grad_norm 1.0 \
   --fp16 \
-  --logging_steps 100 \
-  > train_u_positive_sft.log 2>&1 &
+  --logging_steps 100 > train_u_positive_sft.log 2>&1 &
 
 测试molt5
 nohup python eval_molt5_topk.py \
