@@ -56,6 +56,7 @@ Please predict the reactant of the product:\n{product_SMILES}
 ---
 
 训练新prompt（route context）
+```bash
 nohup python train_molt5_route_context_sft.py \
   --data_dir ../dataset/single_step_no_overlap \
   --model_dir ../MolT5 \
@@ -71,8 +72,10 @@ nohup python train_molt5_route_context_sft.py \
   --early_stop_patience 5 \
   --early_stop_min_delta 1e-4 \
   --fp16 > train.log 2>&1 &
+```
 
 生成top20路径候选（为dpo偏好对构建做准备）
+```bash
 nohup python generate_route_context_candidates.py \
   --data_dir ../dataset/single_step_no_overlap \
   --model_dir ../molt5_route_context_sft/checkpoint-best \
@@ -82,8 +85,10 @@ nohup python generate_route_context_candidates.py \
   --batch_size 8 \
   --max_depth 14 \
   --fp16 > process.log 2>&1 &
+```
 
 构建偏好对
+```bash
 nohup python build_dpo_pairs_with_u.py \
   --candidate_dir ./dpo_candidates_route_context_sft_top20 \
   --single_step_dir ../dataset/single_step_no_overlap \
@@ -95,8 +100,10 @@ nohup python build_dpo_pairs_with_u.py \
   --forward_num_beams 5 \
   --forward_batch_size 16 \
   --forward_fp16 > build_dpo_pairs_u.log 2>&1 &
+```
 
 筛选构建u-positive:
+```bash
 python build_u_positive_sft_data.py \
   --train_json ../dataset/single_step_no_overlap/train_single_step_dedup.json \
   --valid_json ../dataset/single_step_no_overlap/valid_single_step_no_train_overlap.json \
@@ -108,8 +115,10 @@ python build_u_positive_sft_data.py \
   --max_bad_action_penalty 0.0 \
   --min_forward_plausibility 0.5 \
   --min_utility 1.5
+```
 
 30轮dpo-sft:
+```bash
 nohup env CUDA_VISIBLE_DEVICES=3 python train_molt5_route_context_positive_sft.py \
   --init_model_dir ../molt5_route_context_sft/checkpoint-best \
   --train_file ./sft_u_positive/train_u_positive_sft.json \
@@ -129,8 +138,10 @@ nohup env CUDA_VISIBLE_DEVICES=3 python train_molt5_route_context_positive_sft.p
   --max_grad_norm 1.0 \
   --fp16 \
   --logging_steps 100 > train_u_positive_sft.log 2>&1 &
+```
 
 测试molt5
+```bash
 nohup python eval_molt5_topk.py \
   --model_dir ../molt5_route_context_sft_u_positive_30epoch/checkpoint-best \
   --data_file ../dataset/single_step_no_overlap/test_single_step_no_train_valid_overlap.json \
@@ -140,6 +151,7 @@ nohup python eval_molt5_topk.py \
   --topk 10 \
   --batch_size 16 \
   --fp16 > test1.log 2>&1 &
+```
 
 ## 依赖库
 
